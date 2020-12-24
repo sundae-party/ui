@@ -2,7 +2,7 @@
     
     
 <!-- Navbar -->
-        <header class="flex-shrink-0 border-b">
+        <header class="flex-shrink-0 border-b bg-white">
           <div class="flex items-center justify-between p-2">
             
             
