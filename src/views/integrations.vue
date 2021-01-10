@@ -32,7 +32,7 @@
 
                         <tbody class="bg-white divide-y divide-gray-200">
                             
-                            <tr v-for="(item, index) in integrations" v-bind:key="index" v-bind:title="index">
+                            <tr v-for="(item, index) in getEntities" v-bind:key="index" v-bind:title="index">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
@@ -52,8 +52,11 @@
                                     <div class="text-sm text-gray-900">14</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    Active
+                                    <span v-if="item.state.on" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    On - {{ item.state.brightness}}
+                                    </span>
+                                    <span v-else class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    Off
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -79,16 +82,15 @@ export default {
         integrations: []
     }
   },
-  methods:{
-    refresh(){
-        this.$options.sockets.onmessage = function(data) {
-            console.log(data.data)
-            this.integrations.push(JSON.parse(data.data).fullDocument)
-        }
+  computed: {
+    getEntities () {
+        return this.$store.state.entities.list
     }
   },
+  methods: {
+
+  },
   mounted: function() {
-    this.refresh()
   }
 }
 </script>

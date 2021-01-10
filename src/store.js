@@ -2,6 +2,9 @@ import { createStore } from 'vuex'
   
 export default createStore({
     state: {
+      entities: {
+        list: []
+      },
       socket: {
         // Connection Status
         isConnected: false,
@@ -15,6 +18,11 @@ export default createStore({
         heartBeatTimer: 0
       }
     },
+    // getters: {
+    //   get_entities: state => {
+    //     return state.entities.list
+    //   }
+    // },
     mutations: {
       // Connection open
       SOCKET_ONOPEN(state, event) {
@@ -46,7 +54,21 @@ export default createStore({
       // Receive the message sent by the server
       SOCKET_ONMESSAGE(state, message) {
         state.socket.message = message;
-        console.log(message)
+        if (Array.isArray(message)) {
+          state.entities.list = message
+        } else {
+          var found = false 
+          for (var i = 0; i < state.entities.list.length; i++) {
+            if (state.entities.list[i].name == message.fullDocument.name) {
+              state.entities.list[i] = message.fullDocument
+              found = true
+              break
+            }
+          }
+          if (!found) {
+            state.entities.list.push(message.fullDocument)
+          }
+        }
       },
       // Auto reconnect
       SOCKET_RECONNECT(state, count) {
@@ -55,6 +77,22 @@ export default createStore({
       // Reconnect error
       SOCKET_RECONNECT_ERROR(state) {
         state.socket.reconnectError = true;
+      },
+      light(state, message) {
+        var found = false 
+          for (var i = 0; i < state.entities.list.length; i++) {
+            if (state.entities.list[i].name == message.name) {
+              state.entities.list[i] = message
+              found = true
+              break
+            }
+          }
+          if (!found) {
+            state.entities.list.push(message)
+          }
+      },
+      entity(state, message) {
+        console.log(message)
       }
     },
     modules: {}
